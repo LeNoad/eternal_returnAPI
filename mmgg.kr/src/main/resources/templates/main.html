@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2CJHMM42L6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-2CJHMM42L6');
+</script>
+<meta charset="UTF-8">
+<title>블랙서바이벌 전적 검색 - MMGG.KR</title>
+<link rel="stylesheet" href="css/bootstrap.css">
+<link href="css/styles.css" rel="stylesheet" />
+<style type="text/css">
+	div#s_left {
+		width:900px;
+		float:left;
+	}
+</style>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="/">MMGG.KR</a>
+				<button class="navbar-toggler" type="button"
+					data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+					aria-controls="navbarSupportedContent" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item"><a class="nav-link" href="ranking">랭킹</a></li>
+						<li class="nav-item"><a class="nav-link" href="master_ranking">장인랭킹</a></li>
+						<li class="nav-item"><a class="nav-link" href="statistics">통계</a></li>
+						<li class="nav-item"><a class="nav-link" href="Item_Encyclopedia">아이템 도감</a></li>
+						<li class="nav-item"><a class="nav-link" href="refresh_ranking_all">[테스트 랭킹갱신]</a>
+						</li>
+					</ul>
+					<form class="d-flex" action="search" method="GET">
+						<input class="form-control me-2" type="search" name="nickname"
+							placeholder="플레이어 닉네임" aria-label="Search">
+						<button class="btn btn-outline-secondary active text-nowrap" type="submit">검색</button>
+					</form>
+				</div>
+			</div>
+		</nav>
+		<header class="py-5 bg-image-full" style="background-image: url('image/banner.jpg');" >
+		<div style="max-width: 100%;">
+		</div>
+		<form action="search" method="GET">
+			<div class="text-center my-5">
+				<a href="/"> <img src="image/text-logo6.png">
+				</a>
+				<div class="search">
+					<button class="btn" type="submit"></button>
+					<input type="text" name="nickname"
+						placeholder="플레이어 닉네임 - Enter">
+				</div>
+			</div>
+		</form>
+		
+		
+     
+	</header> <!-- 랭킹 게시판 -->
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7050095780717943"
+     crossorigin="anonymous">
+		</script>
+	<div class="container my-5">
+		<div class="row justify-content-center">
+			<div class="col-lg-6" id="s_left">
+			<h1 class="text-center text-info">솔로 랭킹</h1>
+				<table class="table text-center">
+					<thead>
+						<tr class="table bg-info text-white">
+							<th nowrap>랭킹</th>
+							<th nowrap>플레이어</th>
+							<th nowrap>MMR</th>
+							<th nowrap>티어</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="solo : ${solo_list}" class="table text-info font-weight-bold">
+							<td th:text="${solo.rank}"></td>
+							<td th:text="${solo.nickname}"></td>
+							<td th:text="${solo.mmr}"></td>
+							<td><img src=image/eternalty_logo.png width=30 height=30> 이터니티</td>
+						</tr>
+					</tbody>
+				</table>
+				<h1 class="text-center text-success">듀오 랭킹</h1>
+				<table class="table text-center">
+					<thead>
+						
+						<tr class="table bg-success text-white">
+							<th nowrap>랭킹</th>
+							<th nowrap>플레이어</th>
+							<th nowrap>MMR</th>
+							<th nowrap>티어</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="duo : ${duo_list}"  class="table text-success font-weight-bold">
+							<td th:text="${duo.rank}"></td>
+							<td th:text="${duo.nickname}"></td>
+							<td th:text="${duo.mmr}"></td>
+							<td><img src=image/eternalty_logo.png width=30 height=30> 이터니티</td>
+						</tr>
+					</tbody>
+				</table>
+				<h1 class="text-center text-warning">스쿼드 랭킹</h1>
+				<table class="table text-center">
+					<thead>
+						<tr class="table bg-warning text-white">
+							<th nowrap>랭킹</th>
+							<th nowrap>플레이어</th>
+							<th nowrap>MMR</th>
+							<th nowrap>티어</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="squad : ${squad_list}" class="table text-warning font-weight-bold">
+							<td th:text="${squad.rank}"></td>
+							<td th:text="${squad.nickname}"></td>
+							<td th:text="${squad.mmr}"></td>
+							<td><img src=image/eternalty_logo.png width=30 height=30> 이터니티</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<footer class="py-5 bg-dark">
+		<div class="container">
+			<p class="m-0 text-center text-white">Copyright &copy; 2021 MorMot Search WebSite</p>
+		</div>
+	</footer>
+</body>
+</html>

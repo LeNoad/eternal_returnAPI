@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>블랙서바이벌 전적 검색 - MM.GG</title>
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+<link href="css/styles.css" rel="stylesheet" />
+<style type="text/css">
+div#s_left {
+	width: 900px;
+	float: left;
+}
+</style>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/">MMGG.KR</a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item"><a class="nav-link" href="ranking">랭킹</a></li>
+					<li class="nav-item"><a class="nav-link" href="master_ranking">장인랭킹</a></li>
+					<li class="nav-item"><a class="nav-link" href="statistics">통계</a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="Item_Encyclopedia">아이템 도감</a></li>
+					<li class="nav-item"><a class="nav-link" href="refresh">[테스트 랭킹갱신]</a></li>
+				</ul>
+				<form class="d-flex" action="search" method="post">
+					<input class="form-control me-2" type="search" name="nickname"
+						placeholder="플레이어 닉네임" aria-label="Search">
+					<button class="btn btn-outline-secondary active text-nowrap" type="submit">검색</button>
+				</form>
+			</div>
+		</div>
+	</nav>
+	<h1>아이템 도감 예정</h1>
+	<footer class="py-5 bg-dark">
+		<div class="container">
+			<p class="m-0 text-center text-white">Copyright &copy; 2021 MorMot Search WebSite</p>
+		</div>
+	</footer>
+</body>
+</html>
