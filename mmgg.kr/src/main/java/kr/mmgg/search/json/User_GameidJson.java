@@ -27,8 +27,8 @@ public class User_GameidJson {
 		try {
 			JSONParser parser = new JSONParser();
 			userGameid_json = (JSONObject) parser.parse(user_gameiduri.gameid(nickname));
-			
 			userGameid_json_arr = (JSONArray) userGameid_json.get("userGames");
+			
 			for (int i = 0; i < userGameid_json_arr.size(); i++) {
 				user_gameiddto = new User_GameidDTO();
 				userGameid_json_arr_obj = (JSONObject) userGameid_json_arr.get(i);
@@ -37,6 +37,7 @@ public class User_GameidJson {
 				user_gameinfojson.read_json(user_gameiddto.getGameId());
 				list.add(user_gameiddto);
 			}
+			
 
 		} catch (ParseException e) {
 			// TODO: handle exception

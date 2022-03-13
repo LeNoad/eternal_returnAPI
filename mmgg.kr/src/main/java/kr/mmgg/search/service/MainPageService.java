@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import kr.mmgg.search.dto.User_GameidDTO;
+import kr.mmgg.search.dto.User_Select_GameidDTO;
 import kr.mmgg.search.entity.gameinfo_data;
 import kr.mmgg.search.entity.maininfo_user;
 import kr.mmgg.search.entity.ranking_duo;
@@ -27,7 +28,6 @@ import kr.mmgg.search.repository.MainInfoRepository;
 import kr.mmgg.search.repository.SoloRepository;
 import kr.mmgg.search.repository.SquadRepository;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j;
 
 @Service
 @AllArgsConstructor
@@ -108,7 +108,11 @@ public class MainPageService {
 		}
 		return result;
 	}
-
+	public List<gameinfo_data> requestGameData(String gameId) {
+		List<gameinfo_data> list = gameInfoRepository.findByGameId(gameId);
+		System.out.println(list.toString());
+		return list;
+	}
 	public void refresh_info(String nickname) {
 		User_stats_JSON stats_JSON = new User_stats_JSON();
 		List<maininfo_user> maininfo_list = stats_JSON.read_json(nickname);
@@ -124,28 +128,36 @@ public class MainPageService {
 		int lastindex = list.size() - 1;
 		String lastGameid = list.get(lastindex).getGameId();
 		Integer userNum = list.get(lastindex).getUserNum();
-		Integer firstGameid_db = gameInfoSelectInfoRepository.findGameIdforUserNum(userNum).getGameId();
+		Integer firstGameid_db = 0;
+		if (gameInfoSelectInfoRepository.findGameIdforUserNum(userNum) != null) {
+			firstGameid_db = gameInfoSelectInfoRepository.findGameIdforUserNum(userNum).getGameId();
+		}
 		Boolean refresh_flag = false;
 		System.out.println("DB안의 마지막저장되어있는 게임번호: " + firstGameid_db);
 		System.out.println("CURL로 받아오는 첫번째 게임번호: " + list.get(0).getGameId());
-
+		
+		
 		for (int i = 0; i < list.size(); i++) {
 			List<gameinfo_data> gameinfo_list = gameinfo_json.read_json(list.get(i).getGameId());
-			if (gameinfo_list.get(i).getGameId().equals(firstGameid_db)) {
-				System.out.println(gameinfo_list.get(i).getGameId() + "까지 Curl 에서 받아온 데이터와 DB데이터가 일치합니다.");
-				refresh_flag = true;
-			} else {
+			ArrayList<String> test = gameInfoRepository.SearchForUserNum(list.get(i).getGameId());
+			Integer count = gameInfoRepository.SearchForUserNumCount(list.get(i).getGameId());
+			System.out.println(i+"번째"+test.toString()+" 플래그 : " +refresh_flag);
 				for (int j = 0; j < gameinfo_list.size(); j++) {
-					if (gameInfoRepository.findByUserNumAndGameId(gameinfo_list.get(j).getUserNum(),
-							gameinfo_list.get(j).getGameId()) == null) {
-						glist.add(gameinfo_list.get(j));
-						System.out.println(gameinfo_list.get(j));
+					if (gameinfo_list.get(j).getGameId().equals(firstGameid_db) && count == 18) {
+						System.out.println(gameinfo_list.get(j).getGameId() + " 까지 Curl 에서 받아온 데이터와 DB에서 받아온 마지막게임번호가 일치합니다.");
+						refresh_flag = true;
+					} else {
+						if(!test.contains(gameinfo_list.get(j).getUserNum().toString())) {
+							glist.add(gameinfo_list.get(j));
+							System.out.println(gameinfo_list.get(j));
+						} else {
+							System.out.println("게임번호"+gameinfo_list.get(j).getGameId()+"번의 유저번호"+test.get(j)+"번을 포함 하고있습니다.");	
+						}
 					}
 				}
-			}
 		}
 		do {
-			Integer nextfirstGameid_curl = null;
+			Integer nextfirstGameid_curl = 0;
 			List<User_GameidDTO> nextlist = gameidnext_json.readnext_json(lastGameid, nickname);
 			if (nextlist.size() != 0) {
 				nextfirstGameid_curl = Integer.parseInt(nextlist.get(0).getGameId());
@@ -153,36 +165,42 @@ public class MainPageService {
 			lastindex = nextlist.size() - 1;
 			for (int i = 0; i < nextlist.size(); i++) {
 				List<gameinfo_data> gameinfo_list = gameinfo_json.read_json(nextlist.get(i).getGameId());
+				ArrayList<String> test = gameInfoRepository.SearchForUserNum(nextlist.get(i).getGameId());
+				Integer count = gameInfoRepository.SearchForUserNumCount(list.get(i).getGameId());
+				System.out.println(i+"번째"+test.toString()+ " 플래그 : " + refresh_flag + " 2번째 플래그 : " + nextfirstGameid_curl+ " <= "  + firstGameid_db);
 				for (int j = 0; j < gameinfo_list.size(); j++) {
-					if (gameInfoRepository.findByUserNumAndGameId(gameinfo_list.get(j).getUserNum(),
-							gameinfo_list.get(j).getGameId()) == null) {
-						glist.add(gameinfo_list.get(j));
-						System.out.println(gameinfo_list.get(j));
+					if (gameinfo_list.get(j).getGameId().equals(firstGameid_db) && count == 18) {
+						System.out.println("데이터베이스에서 검색된 마지막 게임번호는"+firstGameid_db+"이며" +gameinfo_list.get(j).getGameId() + "번은 Curl에서 받아온 게임번호 입니다.");
+						refresh_flag = true;
+					} else {
+						if(!test.contains(gameinfo_list.get(j).getUserNum().toString())) {
+							glist.add(gameinfo_list.get(j));
+							System.out.println(gameinfo_list.get(j));
+						} else {
+							System.out.println("게임번호"+gameinfo_list.get(j).getGameId()+"번은 유저번호"+test.get(j)+"번을 포함 하고있습니다.");
+						}
 					}
 				}
 			}
-			if (lastindex == -1 || nextfirstGameid_curl <= firstGameid_db && refresh_flag == true) {
+			//nextfirstGameid_curl <= firstGameid_db &&
+			//nextfirstGameid_curl >= firstGameid_db &&
+			if (lastindex == -1 ||  refresh_flag == true) {
 				break;
 			} else {
 				lastGameid = nextlist.get(lastindex).getGameId();
 			}
 		} while (true);
-		System.out.println("List Size : " + glist.size());
-		System.out.println("데이터 저장합니다.");
+		System.out.println("List Size : " + glist.size() + " 데이터를 저장합니다.");
 		gameInfoRepository.saveAll(glist);
+		gameInfoRepository.flush();
 	}
 
 	public boolean exits_gameid(String nickname) {
-		if(gameInfoSelectInfoRepository.findByNickname(nickname) != null) {
+		if (gameInfoSelectInfoRepository.findByNickname(nickname) != null) {
 			return true;
 		} else {
 			return false;
 		}
-//		if (list.get(0) == null) { // 게임번호가 없다.
-//			return true; // True
-//		} else {
-//			return false; // 전적을 검색했던 결과가 있다. False
-//		}
 	}
 
 	public boolean exits_nickname(String nickname) {

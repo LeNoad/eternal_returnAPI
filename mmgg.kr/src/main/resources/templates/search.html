@@ -3,8 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <title>블랙서바이벌 전적 검색 - MM.GG</title>
-<link rel="stylesheet" href="css/bootstrap.css">
-<link href="css/styles.css" rel="stylesheet" />
+<!-- Jquery 호출 -->
+<script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.bundle.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+
+<!-- 부트스트랩 4.4.1 -->
+<link rel="stylesheet" href="/css/bootstrap.css">
+<!-- <link href="css/styles.css" rel="stylesheet" /> -->
 <style type="text/css">
 div#s_left {
 	width: 900px;
@@ -23,16 +29,25 @@ div#s_left {
 .img {
 	object-fit: fill
 }
-.character-info__character {
-    width: 112px;
-    height: 100px;
-    border-radius: 50%;
-    background-color: #d6d6d6;
-    background-position: 50%;
-    background-size: cover;
-    background-repeat: no-repeat;
-</style>
 
+.character-info__character {
+	width: 112px;
+	height: 100px;
+	border-radius: 50%;
+	background-color: #d6d6d6;
+	background-position: 50%;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
+.match-history__item__detail__button {
+	width: 50%;
+	height: calc(100% + 2px);
+	outline: 0;
+	border: 0;
+	padding: 10px 12px;
+}
+</style>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container-fluid">
@@ -50,8 +65,6 @@ div#s_left {
 					<li class="nav-item"><a class="nav-link" href="statistics">통계</a></li>
 					<li class="nav-item"><a class="nav-link"
 						href="Item_Encyclopedia">아이템 도감</a></li>
-					<li class="nav-item"><a class="nav-link" href="refresh">[테스트
-							랭킹갱신]</a></li>
 				</ul>
 				<!-- 				<form class="d-flex" action="search" method="post">
 					<input class="form-control me-2" type="search" name="nickname"
@@ -68,8 +81,7 @@ div#s_left {
 			<div class="col-xs-12 bg-dark">
 				<div class="row">
 					<div class="col-md-3">
-						<img
-							th:src="'/image/char_thumnail/' + ${tier.thumnailNum}+'.png'"
+						<img th:src="'/image/char_thumnail/' + ${tier.thumnailNum}+'.png'"
 							class="rounded mx-auto d-block" width=240 height=208>
 					</div>
 
@@ -81,22 +93,44 @@ div#s_left {
 									<b th:text="${main_list.nickname}"></b>
 								</h3>
 							</div>
-
 							<div class="col-xs text-white" style="margin-top: 15px">
 								<input type="hidden" name="nickname"
 									th:value=${main_list.nickname}>
 								<button class="btn btn-outline-light" type="submit">전적
 									갱신</button>
 								<!-- 값은 전달받지만 컨트롤러부분 미적용 -->
-								<button class="btn btn-outline-light" type="submit">즐겨찾기</button>
+								<!--<button class="btn btn-outline-light" type="button">즐겨찾기</button>  -->
+								<!-- Example single danger button -->
+								<div class="dropdown float-right" style="margin-right:20px">
+								  <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    일반
+								  </button>
+								  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+								    <a class="dropdown-item" href="season5">시즌5</a>
+								    <a class="dropdown-item" href="season4">시즌4</a>
+								  </div>
+								</div>
 							</div>
+
 						</form>
 						<div class="col-xs text-white" style="margin-top: 5px">
 							최근 업데이트: <b th:text="${main_list.date}"></b>
 						</div>
 					</div>
 				</div>
+				<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+					<div class="collapse navbar-collapse" id="navbarNavDropdown">
+						<ul class="navbar-nav fs-4">
+							<li class="nav-item active"><a class="nav-link"
+								href="profile">프로필</a></li>
+							<li class="nav-item"><a class="nav-link" href="character">캐릭터</a></li>
+							<li class="nav-item"><a class="nav-link" href="matchhistory">매치
+									히스토리</a></li>
+						</ul>
+					</div>
+				</nav>
 			</div>
+
 		</div>
 		<div class="row">
 			<div class="col-lg-12">
@@ -574,68 +608,150 @@ div#s_left {
 					</div>
 				</div>
 			</div>
-
-			<div class="col-lg-12 bg-white" style="margin-top: 20px;">
-				<div class="card" th:each="article : ${gameinfo_list}">
-					<h3 class="card-header text-white bg-info mb-3">
-						<b th:text="|${article.gameRank}등|" ></b>
-					</h3>
-					<div class="card-title container bg-white">
-						<div class="row mp">
-							<div class="col-lg-1" th:text="${article.gameId}"></div>
-							<div class="col-lg-2">
-								<img class="character-info__character" th:src="'/image/char_thumnail/'+${article.characterNum}+'.png'">
-							</div>
-							<div class="col-lg-2" th:text="'KILL : '+${article.playerKill}"></div>
-							<div class="col-lg-2" th:text="'Damage : '+${article.damageToPlayer}"></div>
-							<div class="col-lg-2" th:text="'MMR : '+${article.mmrBefore}"></div>
-							<div class="col-lg-3 mp">
-								<div class="row">
-									<div class="col-md-4 mp">
-										<img class="mp"
-											th:src="'/image/weapon/'+${article.equipment_0}+'.png'"
-											width="72" height="48">
+		</div>
+		
+		<div class="card col-lg-12 bg-white" style="margin-top: 20px; padding:0px;">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark"
+			style="margin:0px;">
+			<div class="collapse navbar-collapse">
+				<ul class="navbar-nav fs-4">
+					<li class="nav-item active"><a class="nav-link" href="all">전체</a></li>
+					<li class="nav-item"><a class="nav-link" href="solo">솔로</a></li>
+					<li class="nav-item"><a class="nav-link" href="duo">듀오</a></li>
+					<li class="nav-item"><a class="nav-link" href="squad">스쿼드</a></li>
+				</ul>
+			</div>
+		</nav>
+			<div class="card-body" th:each="article : ${gameinfo_list}"
+				th:id="${article.gameId}" style="margin-bottom: 20px;">
+				<table class="card-header text-white table mb-3">
+					<thead class="thead-dark">
+						<tr class="text-center fs-4">
+							<th>등</th>
+							<th>실험체</th>
+							<th>킬</th>
+							<th>딜량</th>
+							<th>MMR</th>
+							<th class="text-right">아이템 빌드</th>
+							<th><button class="btn float-right btn-secondary"
+									type="button"
+									th:onclick="'javascript:gameIdsend('+ ${article.gameId} +');'">▼</button></th>
+						</tr>
+					</thead>
+					<tbody class="card-title container bg-white text-dark">
+						<tr class="text-center fs-4">
+							<td th:text="|#${article.gameRank}|"></td>
+							<td><img class="character-info__character"
+								th:src="'/image/char_thumnail/'+${article.characterNum}+'.png'"></td>
+							<td><div th:text="${article.playerKill}"></div></td>
+							<td><div th:text="${article.damageToPlayer}"></div></td>
+							<td><div th:text="${article.mmrBefore}"></div></td>
+							<td colspan="2"><div>
+									<div class="row" style="margin-bottom: 10px">
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_0}+'.png'"
+												width="72" height="48">
+										</div>
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_1}+'.png'"
+												width="72" height="48">
+										</div>
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_2}+'.png'"
+												width="72" height="48">
+										</div>
 									</div>
-									<div class="col-md-4 mp">
-										<img class="mp"
-											th:src="'/image/weapon/'+${article.equipment_1}+'.png'"
-											width="72" height="48">
+									<div class="row" style="margin-top: 10px">
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_3}+'.png'"
+												width="72" height="48">
+										</div>
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_4}+'.png'"
+												width="72" height="48">
+										</div>
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_5}+'.png'"
+												width="72" height="48">
+										</div>
 									</div>
-									<div class="col-md-4 mp">
-										<img class="mp"
-											th:src="'/image/weapon/'+${article.equipment_2}+'.png'"
-											width="72" height="48">
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-4 mp">
-										<img class="mp"
-											th:src="'/image/weapon/'+${article.equipment_3}+'.png'"
-											width="72" height="48">
-									</div>
-									<div class="col-md-4 mp">
-										<img class="mp"
-											th:src="'/image/weapon/'+${article.equipment_4}+'.png'"
-											width="72" height="48">
-									</div>
-									<div class="col-md-4 mp">
-										<img class="mp"
-											th:src="'/image/weapon/'+${article.equipment_5}+'.png'"
-											width="72" height="48">
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+							</div></td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
-	<footer class="py-5 bg-dark">
-		<div class="container">
-			<p class="m-0 text-center text-white">Copyright &copy; 2021
-				MorMot Search WebSite</p>
-		</div>
-	</footer>
 </body>
+<script th:inline="javascript">
+	function gameIdsend(gameId) {
+		var senddata = gameId;
+		$
+				.ajax({
+					url : "/requestGamedata",
+					type : "POST",
+					data : {
+						gameId : senddata
+					},
+					success : function(object) {
+						var str = '<table class ="table">';
+						str += '<thead class="thead-dark">';
+						str += '<tr class="text-center">';
+						str += '<th>등수</th><th>실험체</th><th>플레이어</th><th>킬</th><th>딜량</th><th>MMR</th><th>아이템 빌드</th>';
+						str += '</tr></thead>';
+						$
+								.each(
+										object,
+										function(i) {
+											str += '<tbody class="text-center">'
+											str += '<tr>';
+											str += '<td>#' + object[i].gameRank
+													+ '</td>'
+											str += '<td><div class="col-lg-2 mp float-center">';
+											str += '<img class="character-info__character" src="/image/char_thumnail/'+object[i].characterNum+'.png">';
+											str += '</div></td>';
+											str += '<td>' + object[i].nickname
+													+ '</td>';
+											str += '<td>'
+													+ object[i].playerKill
+													+ '</td>';
+											str += '<td>'
+													+ object[i].damageToPlayer
+													+ '</td>';
+											str += '<td>' + object[i].mmrBefore
+													+ '</td>';
+											str += '<td><div class="row float-center">';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_0+'.png" width="72" height="48"></div>';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_1+'.png" width="72" height="48"></div>';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_2+'.png" width="72" height="48"></div></div>';
+											str += '<div class="row float-center">';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_3+'.png" width="72" height="48"></div>';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_4+'.png" width="72" height="48"></div>';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_5+'.png" width="72" height="48"></div></div>';
+											str += '</td>'
+											str += '</tr>'
+
+										});
+						str += '</tbody>'
+						str += '</table>';
+						$("#" + senddata).append(str);
+					},
+					error : function() {
+
+					}
+				})
+	}
+</script>
+<footer class="py-5 bg-dark">
+	<div class="container">
+		<p class="m-0 text-center text-white">Copyright &copy; 2021 MorMot
+			Search WebSite</p>
+	</div>
+</footer>
 </html>

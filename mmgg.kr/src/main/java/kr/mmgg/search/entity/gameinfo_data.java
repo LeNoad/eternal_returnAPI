@@ -19,6 +19,7 @@ public class gameinfo_data {
 	private Integer gameId;
 	private String nickname;
 	private Integer userNum;
+	private Integer seasonId;
 	private Integer matchingMode;
 	private Integer matchingTeamMode;
 	private Integer gameRank;

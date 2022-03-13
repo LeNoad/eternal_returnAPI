@@ -39,7 +39,7 @@ public class User_GameinfoJson {
 				user_Gameinfodto.setUserNum(Integer.parseInt(userGameinfo_json_arr_obj.get("userNum").toString()));
 				user_Gameinfodto.setMatchingMode(Integer.parseInt(userGameinfo_json_arr_obj.get("matchingMode").toString()));
 				user_Gameinfodto.setMatchingTeamMode(Integer.parseInt(userGameinfo_json_arr_obj.get("matchingTeamMode").toString()));
-
+				user_Gameinfodto.setSeasonId(Integer.parseInt(userGameinfo_json_arr_obj.get("seasonId").toString()));
 				user_Gameinfodto.setGameRank(Integer.parseInt(userGameinfo_json_arr_obj.get("gameRank").toString()));
 				user_Gameinfodto.setCharacterLevel(Integer.parseInt(userGameinfo_json_arr_obj.get("characterLevel").toString()));
 				user_Gameinfodto.setMmrBefore(Integer.parseInt(userGameinfo_json_arr_obj.get("mmrBefore").toString()));
@@ -85,11 +85,16 @@ public class User_GameinfoJson {
 				} else {
 					user_Gameinfodto.setEquipment_5(0);
 				}
-				user_Gameinfodto.setTraitFirstCore(Integer.parseInt(userGameinfo_json_arr_obj.get("traitFirstCore").toString()));
-				user_Gameinfodto.setTraitFirstSub_1(Integer.parseInt(userGameinfo_json_traitFirst.get(0).toString()));
-				user_Gameinfodto.setTraitFirstSub_2(Integer.parseInt(userGameinfo_json_traitFirst.get(1).toString()));
-				user_Gameinfodto.setTraitSecondSub_1(Integer.parseInt(userGameinfo_json_traitSecond.get(0).toString()));
-				user_Gameinfodto.setTraitSecondSub_2(Integer.parseInt(userGameinfo_json_traitSecond.get(1).toString()));
+				try {
+					user_Gameinfodto.setTraitFirstCore(Integer.parseInt(userGameinfo_json_arr_obj.get("traitFirstCore").toString()));
+					user_Gameinfodto.setTraitFirstSub_1(Integer.parseInt(userGameinfo_json_traitFirst.get(0).toString()));
+					user_Gameinfodto.setTraitFirstSub_2(Integer.parseInt(userGameinfo_json_traitFirst.get(1).toString()));
+					user_Gameinfodto.setTraitSecondSub_1(Integer.parseInt(userGameinfo_json_traitSecond.get(0).toString()));
+					user_Gameinfodto.setTraitSecondSub_2(Integer.parseInt(userGameinfo_json_traitSecond.get(1).toString()));
+				} catch (IndexOutOfBoundsException e) {
+					// TODO: handle exception
+					
+				}
 //				System.out.println("게임번호 : " + user_Gameinfodto.getGameId());
 //				System.out.println("닉네임 : " + user_Gameinfodto.getNickname());
 //				System.out.println("유저번호 : " + user_Gameinfodto.getUserNum());
@@ -122,15 +127,12 @@ public class User_GameinfoJson {
 				list.add(user_Gameinfodto);
 			}
 //			System.out.println("---------------------------------------------------------까지가 한판");
-
 //			System.out.println(list.size());
-
 //			for (int j = 0; j < list.size(); j++) {
 //				gameinfoRepository.save(list.get(j));
 //			}
-
 //				if(gameinfoRepository.findByGameIdAndNickname(Integer.parseInt(user_Gameinfodto.getGameid()), user_Gameinfodto.getNickname()) {
-//					
+			
 //				}
 //				if(user_Gameinfojdbc.select_gameinfo_sql(user_Gameinfodto.getGameid(), user_Gameinfodto.getNickname())) {
 //					user_Gameinfojdbc.insert_gameinfo_sql(user_Gameinfodto.getGameid(), user_Gameinfodto.getNickname(),

@@ -24,7 +24,7 @@ public class Connect_Manager {
 			con.setRequestProperty("accept", "application/json");
 			con.setRequestProperty("x-api-key", api.getKey());
 			responseCode = con.getResponseCode();
-			System.out.println("responseCode : " + responseCode);
+//			System.out.println("responseCode : " + responseCode);
 			BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
 			while ((output = br.readLine()) != null) {

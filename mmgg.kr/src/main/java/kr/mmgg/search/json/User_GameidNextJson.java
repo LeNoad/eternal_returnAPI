@@ -35,6 +35,11 @@ public class User_GameidNextJson {
 					user_gameiddto.setGameId(userGameid_json_arr_obj.get("gameId").toString());
 					list.add(user_gameiddto);
 				}
+//				try {
+//					user_gameiddto.setNext(userGameid_json.get("next").toString());
+//				} catch (NullPointerException e) {
+//					user_gameiddto.setNext(null);
+//				}
 			}
 		} catch (ParseException e) {
 			// TODO: handle exception

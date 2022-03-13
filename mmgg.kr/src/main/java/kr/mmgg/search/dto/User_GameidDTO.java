@@ -6,4 +6,5 @@ import lombok.Data;
 public class User_GameidDTO {
 	private Integer userNum;
 	private String gameId;
+	private String Next;
 }

@@ -1,5 +1,7 @@
 package kr.mmgg.search.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
@@ -8,11 +10,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.RedirectView;
 
-import kr.mmgg.search.dto.select_tierDTO;
+import kr.mmgg.search.dto.User_SelecttierDTO;
+import kr.mmgg.search.entity.gameinfo_data;
 import kr.mmgg.search.entity.maininfo_user;
 import kr.mmgg.search.repository.MainInfoRepository;
 import kr.mmgg.search.service.MainPageService;
@@ -61,7 +67,14 @@ public class MainPageController {
 		mainPageService.refresh_ranking_ALL();
 		return "redirect:/"; // 전적 갱신후 리다이렉트
 	}
-
+	
+	@RequestMapping(value= "/requestGamedata", method= {RequestMethod.POST})
+	@ResponseBody
+	public List<gameinfo_data> requestGamedata(@RequestParam("gameId") String gameId) {
+		List<gameinfo_data> list = mainPageService.requestGameData(gameId);
+		return list;
+	}
+	
 	@PostMapping("/search")
 	@Transactional
 	public String refresh_info(@RequestParam("nickname") String nickname, Model model) { // 임시로
@@ -85,7 +98,7 @@ public class MainPageController {
 		}
 		int[] rank_mmr = new int[3];
 		String[] tier = new String[3];
-		select_tierDTO tierDto = new select_tierDTO();
+		User_SelecttierDTO tierDto = new User_SelecttierDTO();
 		
 		if (user.getRank_solo_mmr() != null) {
 			rank_mmr[0] = user.getRank_solo_mmr();
@@ -167,7 +180,7 @@ public class MainPageController {
 		
 		int[] rank_mmr = new int[3];
 		String[] tier = new String[3];
-		select_tierDTO tierDto = new select_tierDTO();
+		User_SelecttierDTO tierDto = new User_SelecttierDTO();
 		
 		if (user.getRank_solo_mmr() != null) {
 			rank_mmr[0] = user.getRank_solo_mmr();
