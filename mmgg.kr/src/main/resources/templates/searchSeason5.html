@@ -86,33 +86,33 @@ div#s_left {
 					</div>
 
 					<div class="col-md-9">
-						<form method="post" action="search">
 							<div class="col-xs text-white" style="margin-top: 85px">
 								<h3>
-
 									<b th:text="${main_list.nickname}"></b>
 								</h3>
 							</div>
 							<div class="col-xs text-white" style="margin-top: 15px">
-								<input type="hidden" name="nickname"
-									th:value=${main_list.nickname}>
-								<button class="btn btn-outline-light" type="submit">전적
-									갱신</button>
+							<form method="post" action="searchSeason5">
+								<input type="hidden" name="nickname" th:value=${main_list.nickname}>
+								<button class="btn btn-outline-light" type="submit">전적 갱신</button>
+							</form>
 								<!-- 값은 전달받지만 컨트롤러부분 미적용 -->
 								<!--<button class="btn btn-outline-light" type="button">즐겨찾기</button>  -->
 								<!-- Example single danger button -->
+							<form method="post">
+							<!-- <input type="hidden" name="nickname" th:value=${main_list.nickname}> -->
 								<div class="dropdown float-right" style="margin-right:20px">
 								  <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								    일반
+								    시즌5
 								  </button>
-								  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-								    <a class="dropdown-item" href="season5">시즌5</a>
-								    <a class="dropdown-item" href="season4">시즌4</a>
+								  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+								    <a class="dropdown-item" th:href="|searchSeason4?nickname=${main_list.nickname}|">시즌4</a>
+								    <a class="dropdown-item" th:href="|searchNormal?nickname=${main_list.nickname}|">일반</a>
 								  </div>
 								</div>
+							</form>
 							</div>
-
-						</form>
+						
 						<div class="col-xs text-white" style="margin-top: 5px">
 							최근 업데이트: <b th:text="${main_list.date}"></b>
 						</div>
@@ -622,8 +622,8 @@ div#s_left {
 				</ul>
 			</div>
 		</nav>
-			<div class="card-body" th:each="article : ${gameinfo_list}"
-				th:id="${article.gameId}" style="margin-bottom: 20px;">
+			<div class="card-body" th:each="article : ${gameinfo_list}"  style="margin-bottom: 20px;">
+			
 				<table class="card-header text-white table mb-3">
 					<thead class="thead-dark">
 						<tr class="text-center fs-4">
@@ -633,16 +633,13 @@ div#s_left {
 							<th>딜량</th>
 							<th>MMR</th>
 							<th class="text-right">아이템 빌드</th>
-							<th><button class="btn float-right btn-secondary"
-									type="button"
-									th:onclick="'javascript:gameIdsend('+ ${article.gameId} +');'">▼</button></th>
+							<th><button class="btn float-right btn-secondary" type="button" th:onclick="'javascript:gameIdsend('+ ${article.gameId} +');'">▼</button></th>
 						</tr>
 					</thead>
 					<tbody class="card-title container bg-white text-dark">
 						<tr class="text-center fs-4">
 							<td th:text="|#${article.gameRank}|"></td>
-							<td><img class="character-info__character"
-								th:src="'/image/char_thumnail/'+${article.characterNum}+'.png'"></td>
+							<td><img class="character-info__character" th:src="'/image/char_thumnail/'+${article.characterNum}+'.png'"></td>
 							<td><div th:text="${article.playerKill}"></div></td>
 							<td><div th:text="${article.damageToPlayer}"></div></td>
 							<td><div th:text="${article.mmrBefore}"></div></td>
@@ -685,6 +682,8 @@ div#s_left {
 						</tr>
 					</tbody>
 				</table>
+				<div th:id="${article.gameId}">
+				</div>
 			</div>
 		</div>
 	</div>
@@ -700,7 +699,7 @@ div#s_left {
 						gameId : senddata
 					},
 					success : function(object) {
-						var str = '<table class ="table">';
+						var str = '<table class ="table" id="detail_gameInfo">';
 						str += '<thead class="thead-dark">';
 						str += '<tr class="text-center">';
 						str += '<th>등수</th><th>실험체</th><th>플레이어</th><th>킬</th><th>딜량</th><th>MMR</th><th>아이템 빌드</th>';
@@ -740,13 +739,15 @@ div#s_left {
 										});
 						str += '</tbody>'
 						str += '</table>';
-						$("#" + senddata).append(str);
+						
+						$("#" + senddata).html(str);
 					},
 					error : function() {
-
+						alert("서버가 불안정합니다. 잠시후에 시도해주세요.")
 					}
-				})
+				});
 	}
+	
 </script>
 <footer class="py-5 bg-dark">
 	<div class="container">

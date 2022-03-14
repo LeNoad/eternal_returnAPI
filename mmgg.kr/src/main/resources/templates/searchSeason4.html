@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>블랙서바이벌 전적 검색 - MM.GG</title>
+<!-- Jquery 호출 -->
+<script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.bundle.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+
+<!-- 부트스트랩 4.4.1 -->
+<link rel="stylesheet" href="/css/bootstrap.css">
+<!-- <link href="css/styles.css" rel="stylesheet" /> -->
+<style type="text/css">
+div#s_left {
+	width: 900px;
+	float: left;
+}
+
+.mp {
+	margin: 0;
+	padding: 0;
+}
+
+.bd {
+	border: 1px solid black
+}
+
+.img {
+	object-fit: fill
+}
+
+.character-info__character {
+	width: 112px;
+	height: 100px;
+	border-radius: 50%;
+	background-color: #d6d6d6;
+	background-position: 50%;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
+.match-history__item__detail__button {
+	width: 50%;
+	height: calc(100% + 2px);
+	outline: 0;
+	border: 0;
+	padding: 10px 12px;
+}
+</style>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/">MMGG.KR</a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item"><a class="nav-link" href="ranking">랭킹</a></li>
+					<li class="nav-item"><a class="nav-link" href="master_ranking">장인랭킹</a></li>
+					<li class="nav-item"><a class="nav-link" href="statistics">통계</a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="Item_Encyclopedia">아이템 도감</a></li>
+				</ul>
+				<!-- 				<form class="d-flex" action="search" method="post">
+					<input class="form-control me-2" type="search" name="nickname"
+						placeholder="플레이어 닉네임" aria-label="Search">
+					<button class="btn btn-outline-secondary active text-nowrap"
+						type="submit">검색</button>
+				</form> -->
+			</div>
+		</div>
+	</nav>
+	<div class="container">
+		<!-- 케릭터 정보 div -->
+		<div class="row-fluid" style="margin-top: 50px">
+			<div class="col-xs-12 bg-dark">
+				<div class="row">
+					<div class="col-md-3">
+						<img th:src="'/image/char_thumnail/' + ${tier.thumnailNum}+'.png'"
+							class="rounded mx-auto d-block" width=240 height=208>
+					</div>
+
+					<div class="col-md-9">
+							<div class="col-xs text-white" style="margin-top: 85px">
+								<h3>
+									<b th:text="${main_list.nickname}"></b>
+								</h3>
+							</div>
+							<div class="col-xs text-white" style="margin-top: 15px">
+							<form method="post" action="searchSeason4">
+								<input type="hidden" name="nickname" th:value=${main_list.nickname}>
+								<button class="btn btn-outline-light" type="submit">전적 갱신</button>
+							</form>
+								<!-- 값은 전달받지만 컨트롤러부분 미적용 -->
+								<!--<button class="btn btn-outline-light" type="button">즐겨찾기</button>  -->
+								<!-- Example single danger button -->
+							<form method="post">
+							<!-- <input type="hidden" name="nickname" th:value=${main_list.nickname}> -->
+								<div class="dropdown float-right" style="margin-right:20px">
+								  <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    시즌4
+								  </button>
+								  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+								    <a class="dropdown-item" th:href="|searchSeason5?nickname=${main_list.nickname}|">시즌5</a>
+								    <a class="dropdown-item" th:href="|searchNormal?nickname=${main_list.nickname}|">일반</a>
+								  </div>
+								</div>
+							</form>
+							</div>
+						
+						<div class="col-xs text-white" style="margin-top: 5px">
+							최근 업데이트: <b th:text="${main_list.date}"></b>
+						</div>
+					</div>
+				</div>
+				<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+					<div class="collapse navbar-collapse" id="navbarNavDropdown">
+						<ul class="navbar-nav fs-4">
+							<li class="nav-item active"><a class="nav-link"
+								href="profile">프로필</a></li>
+							<li class="nav-item"><a class="nav-link" href="character">캐릭터</a></li>
+							<li class="nav-item"><a class="nav-link" href="matchhistory">매치
+									히스토리</a></li>
+						</ul>
+					</div>
+				</nav>
+			</div>
+
+		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="row">
+					<div class="col-lg-4" style="margin-top: 16px;">
+						<div class="card">
+							<h3 class="card-header text-center text-white bg-info mb-3">
+								<b>SOLO</b>
+							</h3>
+							<div class="card-title container bg-white">
+								<div class="row">
+									<div class="col-md-4">
+										<!--"'/image/rank/' + ${tier.solo_tier}+'.png'"  -->
+										<img th:src="'/image/rank/' + ${tier.solo_tier}+'.png'"
+											class="rounded float-left" width="80" height="80">
+									</div>
+									<div class="col-md-8">
+										<div class="col-xs text-info">
+											<h2 style="display: inline">
+												<b th:text="${main_list.rank_solo_mmr}"></b>
+											</h2>
+											<h4 style="display: inline">MMR</h4>
+										</div>
+										<div class="col-xs text-secondary">
+											<font size="2.0pt"> 41,758위 (상위 5.3%) </font>
+										</div>
+										<div class="col-xs text-secondary">
+											<font size="2.0pt"> 35,679위 (상위 8.3%) </font>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">평균순위</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_solo_averagerank}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-info" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">승</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_solo_totalwins}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-info" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">게임수</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_solo_totalgames}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-info" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">평균킬</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_solo_averagekills}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-info" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">평균어시</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_solo_averageassistants}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-info" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">TOP3</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt" th:text="${main_list.rank_solo_top3}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-info" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-4" style="margin-top: 16px;">
+						<div class="card">
+							<h3 class="card-header text-center text-white bg-success mb-3">
+								<b>DUO</b>
+							</h3>
+							<div class="card-title container bg-white">
+								<div class="row">
+									<div class="col-md-4">
+										<!-- "'/image/rank/' + ${tier.duo_tier}+'.png'" -->
+										<img th:src="'/image/rank/' + ${tier.duo_tier}+'.png'"
+											class="rounded float-left" width="80" height="80">
+									</div>
+									<div class="col-md-8">
+										<div class="col-xs text-success">
+											<h2 style="display: inline">
+												<b th:text="${main_list.rank_duo_mmr}"></b>
+											</h2>
+											<h4 style="display: inline">MMR</h4>
+										</div>
+										<div class="col-xs text-secondary">
+											<font size="2.7pt"> 48,821위 (상위 5.3%) </font>
+										</div>
+										<div class="col-xs text-secondary">
+											<font size="2.7pt"> 35,153위 (상위 8.3%) </font>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">평균순위</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_duo_averagerank}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-success" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">승</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_duo_totalwins}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-success" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">게임수</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_duo_totalgames}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-success" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">평균킬</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_duo_averagekills}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-success" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">평균어시</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_duo_averageassistants}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-success" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">TOP3</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt" th:text="${main_list.rank_duo_top3}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-success" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-4" style="margin-top: 16px;">
+						<div class="card">
+							<h3 class="card-header text-center text-white bg-warning mb-3">
+								<b>SQUAD</b>
+							</h3>
+							<div class="card-title container bg-white">
+								<div class="row">
+									<div class="col-md-4">
+										<!-- "'/image/rank/' + ${tier.squad_tier}+'.png'" -->
+										<img th:src="'/image/rank/' + ${tier.squad_tier}+'.png'"
+											class="rounded float-left" width="80" height="80">
+									</div>
+									<div class="col-md-8">
+										<div class="col-xs text-warning">
+											<h2 style="display: inline">
+												<b th:text="${main_list.rank_squad_mmr}"></b>
+											</h2>
+											<h4 style="display: inline">MMR</h4>
+										</div>
+										<div class="col-xs text-secondary">
+											<font size="2.7pt"> 43,875위 (상위 5.3%) </font>
+										</div>
+										<div class="col-xs text-secondary">
+											<font size="2.7pt"> 35,759위 (상위 8.3%) </font>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">평균순위</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_squad_averagerank}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-warning" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">승</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_squad_totalwins}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-warning" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">게임 수</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_squad_totalgames}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-warning" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">평균킬</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_squad_averagekills}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-warning" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">평균어시</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt"
+														th:text="${main_list.rank_squad_averageassistants}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-warning" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6"
+										style="margin-top: 10px; margin-bottom: 10px;">
+										<div class="row">
+											<div class="col-md-7">
+												<font size="2.0pt">TOP3</font>
+											</div>
+											<div class="col-md-5">
+												<div align="right">
+													<font size="2.0pt" th:text="${main_list.rank_squad_top3}"></font>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="progress" style="height: 3px;">
+													<div class="progress-bar bg-warning" role="progressbar"
+														style="width: 100%;" aria-valuenow="100" aria-valuemin="0"
+														aria-valuemax="100"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="card col-lg-12 bg-white" style="margin-top: 20px; padding:0px;">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark"
+			style="margin:0px;">
+			<div class="collapse navbar-collapse">
+				<ul class="navbar-nav fs-4">
+					<li class="nav-item active"><a class="nav-link" href="all">전체</a></li>
+					<li class="nav-item"><a class="nav-link" href="solo">솔로</a></li>
+					<li class="nav-item"><a class="nav-link" href="duo">듀오</a></li>
+					<li class="nav-item"><a class="nav-link" href="squad">스쿼드</a></li>
+				</ul>
+			</div>
+		</nav>
+			<div class="card-body" th:each="article : ${gameinfo_list}"  style="margin-bottom: 20px;">
+			
+				<table class="card-header text-white table mb-3">
+					<thead class="thead-dark">
+						<tr class="text-center fs-4">
+							<th>등</th>
+							<th>실험체</th>
+							<th>킬</th>
+							<th>딜량</th>
+							<th>MMR</th>
+							<th class="text-right">아이템 빌드</th>
+							<th><button class="btn float-right btn-secondary" type="button" th:onclick="'javascript:gameIdsend('+ ${article.gameId} +');'">▼</button></th>
+						</tr>
+					</thead>
+					<tbody class="card-title container bg-white text-dark">
+						<tr class="text-center fs-4">
+							<td th:text="|#${article.gameRank}|"></td>
+							<td><img class="character-info__character" th:src="'/image/char_thumnail/'+${article.characterNum}+'.png'"></td>
+							<td><div th:text="${article.playerKill}"></div></td>
+							<td><div th:text="${article.damageToPlayer}"></div></td>
+							<td><div th:text="${article.mmrBefore}"></div></td>
+							<td colspan="2"><div>
+									<div class="row" style="margin-bottom: 10px">
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_0}+'.png'"
+												width="72" height="48">
+										</div>
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_1}+'.png'"
+												width="72" height="48">
+										</div>
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_2}+'.png'"
+												width="72" height="48">
+										</div>
+									</div>
+									<div class="row" style="margin-top: 10px">
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_3}+'.png'"
+												width="72" height="48">
+										</div>
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_4}+'.png'"
+												width="72" height="48">
+										</div>
+										<div class="col-md-4 mp">
+											<img class="mp"
+												th:src="'/image/weapon/'+${article.equipment_5}+'.png'"
+												width="72" height="48">
+										</div>
+									</div>
+							</div></td>
+						</tr>
+					</tbody>
+				</table>
+				<div th:id="${article.gameId}">
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script th:inline="javascript">
+	function gameIdsend(gameId) {
+		var senddata = gameId;
+		$
+				.ajax({
+					url : "/requestGamedata",
+					type : "POST",
+					data : {
+						gameId : senddata
+					},
+					success : function(object) {
+						var str = '<table class ="table" id="detail_gameInfo">';
+						str += '<thead class="thead-dark">';
+						str += '<tr class="text-center">';
+						str += '<th>등수</th><th>실험체</th><th>플레이어</th><th>킬</th><th>딜량</th><th>MMR</th><th>아이템 빌드</th>';
+						str += '</tr></thead>';
+						$
+								.each(
+										object,
+										function(i) {
+											str += '<tbody class="text-center">'
+											str += '<tr>';
+											str += '<td>#' + object[i].gameRank
+													+ '</td>'
+											str += '<td><div class="col-lg-2 mp float-center">';
+											str += '<img class="character-info__character" src="/image/char_thumnail/'+object[i].characterNum+'.png">';
+											str += '</div></td>';
+											str += '<td>' + object[i].nickname
+													+ '</td>';
+											str += '<td>'
+													+ object[i].playerKill
+													+ '</td>';
+											str += '<td>'
+													+ object[i].damageToPlayer
+													+ '</td>';
+											str += '<td>' + object[i].mmrBefore
+													+ '</td>';
+											str += '<td><div class="row float-center">';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_0+'.png" width="72" height="48"></div>';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_1+'.png" width="72" height="48"></div>';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_2+'.png" width="72" height="48"></div></div>';
+											str += '<div class="row float-center">';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_3+'.png" width="72" height="48"></div>';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_4+'.png" width="72" height="48"></div>';
+											str += '<div class="col-md-4 mp"><img class="mp" src="/image/weapon/'+object[i].equipment_5+'.png" width="72" height="48"></div></div>';
+											str += '</td>'
+											str += '</tr>'
+
+										});
+						str += '</tbody>'
+						str += '</table>';
+						
+						$("#" + senddata).html(str);
+					},
+					error : function() {
+						alert("서버가 불안정합니다. 잠시후에 시도해주세요.")
+					}
+				});
+	}
+	
+</script>
+<footer class="py-5 bg-dark">
+	<div class="container">
+		<p class="m-0 text-center text-white">Copyright &copy; 2021 MorMot
+			Search WebSite</p>
+	</div>
+</footer>
+</html>

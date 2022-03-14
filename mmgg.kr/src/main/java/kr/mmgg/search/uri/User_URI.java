@@ -29,10 +29,22 @@ public class User_URI {
 		String top_rank_url_squad = api_value.getUrl() +  "/rank/top/9/3";
 		return connect.connect_toAPI(top_rank_url_squad);
 	}
-	public String stats_uri(String user_number) {
+	public String normal_stats_uri(String user_number) {
+		api_value = new Static_Api_Key();
+		connect = new Connect_Manager();
+		String stats_url = api_value.getUrl() + "/user/stats/"+user_number+"/0";
+		return connect.connect_toAPI(stats_url);
+	}
+	public String season4_stats_uri(String user_number) {
 		api_value = new Static_Api_Key();
 		connect = new Connect_Manager();
 		String stats_url = api_value.getUrl() + "/user/stats/"+user_number+"/7";
+		return connect.connect_toAPI(stats_url);
+	}
+	public String season5_stats_uri(String user_number) {
+		api_value = new Static_Api_Key();
+		connect = new Connect_Manager();
+		String stats_url = api_value.getUrl() + "/user/stats/"+user_number+"/9";
 		return connect.connect_toAPI(stats_url);
 	}
 	public String usernum_uri(String nickname) {

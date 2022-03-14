@@ -6,19 +6,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
+import javax.persistence.Table;
 import lombok.Data;
 
 @Data
 @Entity
-public class maininfo_user {
+@Table(name = "maininfo_user_season5")
+public class maininfo_user_season5 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
 	private Integer id;
-	
 	@Column(name="userNum")
-	private String usernum;
+	private Integer usernum;
 	
 	@Column(name="nickname")
 	private String nickname;
